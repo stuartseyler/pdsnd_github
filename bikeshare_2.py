@@ -2,9 +2,9 @@ import time
 import pandas as pd
 import numpy as np
 
-CITY_DATA = { 'Chicago': 'chicago.csv',
-              'New York City': 'new_york_city.csv',
-              'Washington': 'washington.csv' }
+CITY_DATA = { 'chicago': 'chicago.csv',
+              'new york city': 'new_york_city.csv',
+              'washington': 'washington.csv' }
 
 def get_filters():
     """
@@ -17,27 +17,27 @@ def get_filters():
     """
     print('Hello! Let\'s explore some US bikeshare data!')
     # get user input for city (chicago, new york city, washington). HINT: Use a while loop to handle invalid inputs
-    city = input("Please choose a city to investigate.  You can search for Chicago, New York City, or Washington.\n")
+    city = input("Please choose a city to investigate.  You can search for Chicago, New York City, or Washington.\n").lower()
 
     while city not in CITY_DATA.keys():
         print('The city you chose is not a valid option.')
-        city = input("Please choose a city to investigate.  You can search for \'Chicago\', \'New York City\', or \'Washington\'.\n")
+        city = input("Please choose a city to investigate.  You can search for \'Chicago\', \'New York City\', or \'Washington\'.\n").lower()
 
     # get user input for month (all, january, february, ... , june)
-    months = ['January', 'February', 'March', 'April', 'May', 'June', 'All']
+    months = ['january', 'february', 'march', 'april', 'may', 'june', 'all']
 
     while True:
-        month = input('Which month would you like to investigate?  Select \'January\', \'February\', \'March\', \'April\', \'May\', or \'June\'.  You can also search \'all\' to apply no monthly filter.\n')
+        month = input('Which month would you like to investigate?  Select \'january\', \'february\', \'march\', \'april\', \'may\', or \'june\'.  You can also search \'all\' to apply no monthly filter.\n').lower()
         if month in months :
             break
         else:
             print('The month you chose was not a valid option.')
 
     # get user input for day of week (all, monday, tuesday, ... sunday)
-    days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'all']
 
     while True:
-        day = input('Please choose a day of the week.\n')
+        day = input('Please choose a day of the week.  You can also select \'all\' to apply no daily filter.\n').lower()
         if day in days:
             break
         else:
@@ -67,12 +67,12 @@ def load_data(city, month, day):
     df['day_of_week'] = df['Start Time'].dt.weekday_name
     df['hour'] = df['Start Time'].dt.hour
 
-    if month != 'All':
-        months = ['January', 'February', 'March', 'April', 'May', 'June']
+    if month != 'all':
+        months = ['january', 'february', 'march', 'april', 'may', 'june']
         month = months.index(month) + 1
         df = df[df['month'] == month]
 
-    if day != 'All':
+    if day != 'all':
         df = df[df['day_of_week'] == day.title()]
 
     return df
@@ -162,6 +162,25 @@ def user_stats(df, city):
     print('-'*40)
 
 
+def display_data(df):
+    ind = 0
+    user_input = input('Would you like to see some raw data, yes or no?  The data will be displayed 5 rows at a time.').lower()
+    if user_input not in ['yes', 'no']:
+        print('Your input was invalid')
+        user_input = input('Would you like to see some raw data, yes or no?  The data will be displayed 5 rows at a time.').lower()
+    elif user_input != 'yes':
+        print('Ok, no raw data will be displayed')
+
+    else:
+        while ind + 5 < df.shape[0]:
+            print(df.iloc[ind:ind+5])
+            ind += 5
+            user_input = input('Would you like 5 more rows of raw data? Please choose yes or no.').lower()
+            if user_input != 'yes':
+                print('Ok, no additional rows of raw data will be displayed')
+                break
+
+
 def main():
     while True:
         city, month, day = get_filters()
@@ -171,6 +190,7 @@ def main():
         station_stats(df)
         trip_duration_stats(df)
         user_stats(df, city)
+        display_data(df)
 
         restart = input('\nWould you like to restart? Enter yes or no.\n')
         if restart.lower() != 'yes':
