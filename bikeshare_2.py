@@ -1,3 +1,8 @@
+## Title:  Analyzing Bikeshare Data
+
+## Summary:  This script will provide users with an interactive experience in
+## understanding basic stats for python users in NYC, Chicago, and Washington.
+
 import time
 import pandas as pd
 import numpy as np
